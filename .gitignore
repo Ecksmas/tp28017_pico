@@ -1,0 +1,42 @@
+# Build artifacts
+/build/
+/CMakeFiles/
+/CMakeCache.txt
+cmake_install.cmake
+Makefile
+*.o
+*.a
+*.so
+*.out
+*.exe
+*.obj
+*.dll
+
+# VS Code settings and extensions
+.vscode/
+*.code-workspace
+
+# Pico SDK and dependencies
+pico_sdk_import.cmake
+pico-sdk/
+pico-examples/
+pico-extras/
+pico-playground/
+lib/
+*.elf
+*.uf2
+*.bin
+*.hex
+
+# Logs and temp files
+*.log
+*.swp
+*.swo
+*.swn
+*.bak
+*.tmp
+*.DS_Store
+
+# WSL-related files
+*.wslg*
+wsl*
