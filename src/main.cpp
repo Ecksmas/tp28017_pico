@@ -239,6 +239,41 @@ void draw_pixel(uint16_t x, uint16_t y, uint16_t color) {
     write_data(0xFF);
 }
 
+void draw_line(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t color) {
+
+    // Out of bounds
+    if (y1 > DISPLAY_HEIGHT || y2 > DISPLAY_HEIGHT ||
+        y1 < 0 || y2 > 0 ) return;
+    if (x1 > DISPLAY_WIDTH || x2 > DISPLAY_WIDTH ||
+        x1 < 0 || x2 < 0) return;
+
+    // If values are equal to just one pixel
+    // TODO
+    
+    if (x1 == x2)
+    {
+        // Vertical line
+        int16_t start_y = (y1 <= y2) ? y1: y2;
+        int16_t end_y = (y1 >= y2) ? y1 : y2;
+
+        for (int16_t i = start_y; i <= end_y; i++)
+        {
+            draw_pixel(x1, i ,color);
+        }
+    }
+    else if (y1 == y2) {
+        // Horizontal line 
+        int16_t start_x = (x1 >= x2) ? x1: x2;
+        int16_t end_x = (x1 <= x2) ? x1 : x2;
+
+        for (int16_t i = start_x; i <= end_x; i++)
+        {
+            draw_pixel(i, y1 ,color);
+        }
+    }
+    
+}
+
 int main()
 {
     stdio_init_all();
