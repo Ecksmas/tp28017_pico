@@ -1,13 +1,14 @@
 #include <stdio.h>
 #include "pico/stdlib.h"
 #include "hardware/gpio.h"
+#include <stdlib.h>
 
 // Control pins, active low (N at the end of name) means they are "on" when at 0 and "off" at 1
 #define LCD_RDN 8   // Controls whether to read signal or not
 #define LCD_WRN 9   // Tells the display if we want to write or not
 #define LCD_RSN 10  // 0 to send a command and 1 to send data
 #define LCD_CSN 11  // On and off switch for communcation, activates or deactives the display controller
-#define LCD_RSTN 12 // Reset the display controller 
+#define LCD_RSTN 12 // Reset the display controller
 
 // Data bus pins (D0-D7 are GPIO 0-7)
 #define LCD_DATA_START 0
@@ -45,16 +46,16 @@ void init_gpio()
     gpio_put(LCD_CSN, 1);
     gpio_put(LCD_RSTN, 1);
 
-
     for (int i = LCD_DATA_START; i <= LCD_DATA_END; i++)
     {
         gpio_init(i);
         gpio_set_dir(i, GPIO_OUT);
-        gpio_put(i,0); // Start with data pins at 0
+        gpio_put(i, 0); // Start with data pins at 0
     }
 }
 
-void write_byte(uint8_t data, bool is_data) {
+void write_byte(uint8_t data, bool is_data)
+{
 
     // True for data false for command
     gpio_put(LCD_RSN, is_data);
@@ -77,15 +78,18 @@ void write_byte(uint8_t data, bool is_data) {
     gpio_put(LCD_CSN, 1);
 }
 
-void write_command(uint8_t command) {
+void write_command(uint8_t command)
+{
     write_byte(command, false);
 }
 
-void write_data(uint8_t data) {
+void write_data(uint8_t data)
+{
     write_byte(data, true);
 }
 
-void reset_sequence() {
+void reset_sequence()
+{
 
     // Activate reset sequence
     gpio_put(LCD_RSTN, 1);
@@ -94,80 +98,80 @@ void reset_sequence() {
     sleep_ms(15);
     gpio_put(LCD_RSTN, 1);
     sleep_ms(15);
-
 }
 
-void display_init() {
+void display_init()
+{
     reset_sequence();
 
     // Based on Ted Rossin's initialization sequence
-    write_command(0x01);    // Software reset
+    write_command(0x01); // Software reset
     sleep_ms(5);
-    
-    write_command(0xCF);    // Power control B
+
+    write_command(0xCF); // Power control B
     write_data(0x00);
     write_data(0x81);
     write_data(0X30);
-    
-    write_command(0xED);    // Power on sequence
+
+    write_command(0xED); // Power on sequence
     write_data(0x64);
     write_data(0x03);
     write_data(0X12);
     write_data(0X81);
-    
-    write_command(0xE8);    // Driver timing control A
+
+    write_command(0xE8); // Driver timing control A
     write_data(0x85);
     write_data(0x10);
     write_data(0x78);
-    
-    write_command(0xCB);    // Power control A
+
+    write_command(0xCB); // Power control A
     write_data(0x39);
     write_data(0x2C);
     write_data(0x00);
     write_data(0x34);
     write_data(0x02);
-    
-    write_command(0xF7);    // Pump ratio control
+
+    write_command(0xF7); // Pump ratio control
     write_data(0x20);
-    
-    write_command(0xEA);    // Driver timing control B
+
+    write_command(0xEA); // Driver timing control B
     write_data(0x00);
     write_data(0x00);
-    
-    write_command(0xC0);    // Power Control 1
+
+    write_command(0xC0); // Power Control 1
     write_data(0x21);
-    
-    write_command(0xC1);    // Power Control 2
+
+    write_command(0xC1); // Power Control 2
     write_data(0x11);
-    
-    write_command(0xC5);    // VCOM Control 1
+
+    write_command(0xC5); // VCOM Control 1
     write_data(0x3F);
     write_data(0x3C);
-    
-    write_command(0xC7);    // VCOM Control 2
+
+    write_command(0xC7); // VCOM Control 2
     write_data(0XB5);
-    
-    write_command(0x36);    // Memory Access Control
+
+    write_command(0x36); // Memory Access Control
     write_data(0x48);
-    
-    write_command(0x3A);    // Pixel Format Set
-    write_data(0x55);      // 16-bit color
-    
-    write_command(0xB1);    // Frame Rate Control
+
+    write_command(0x3A); // Pixel Format Set
+    write_data(0x55);    // 16-bit color
+
+    write_command(0xB1); // Frame Rate Control
     write_data(0x00);
     write_data(0x18);
-    
-    write_command(0xB6);    // Display Function Control
+
+    write_command(0xB6); // Display Function Control
     write_data(0x0A);
     write_data(0xA2);
-    
-    write_command(0xF2);    // Enable 3G
+
+    write_command(0xF2); // Enable 3G
     write_data(0x00);
-    
-    write_command(0x26);    // Gamma Set
+
+    write_command(0x26); // Gamma Set
     write_data(0x01);
-    
-    write_command(0xE0);    // Positive Gamma Correction
+
+    write_command(0xE0); // Positive Gamma Correction
     write_data(0x0F);
     write_data(0x23);
     write_data(0x1F);
@@ -183,8 +187,8 @@ void display_init() {
     write_data(0x10);
     write_data(0x09);
     write_data(0x00);
-    
-    write_command(0XE1);    // Negative Gamma Correction
+
+    write_command(0XE1); // Negative Gamma Correction
     write_data(0x00);
     write_data(0x1C);
     write_data(0x20);
@@ -200,16 +204,17 @@ void display_init() {
     write_data(0x2F);
     write_data(0x36);
     write_data(0x0F);
-    
-    write_command(0x11);    // Exit Sleep Mode
+
+    write_command(0x11); // Exit Sleep Mode
     sleep_ms(120);
-    
-    write_command(0x29);    // Display ON
+
+    write_command(0x29); // Display ON
     sleep_ms(100);
 }
 
-void set_window(uint16_t x1, uint16_t y1, uint16_t x2,uint16_t y2) {
-    
+void set_window(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2)
+{
+
     // Set column address
     write_command(0x2A);
     write_data(x1 >> 8);
@@ -226,11 +231,12 @@ void set_window(uint16_t x1, uint16_t y1, uint16_t x2,uint16_t y2) {
 
     // Prepare to write memory
     write_command(0x2c);
-
 }
 
-void draw_pixel(uint16_t x, uint16_t y, uint16_t color) {
-    if (x >= DISPLAY_WIDTH || y >= DISPLAY_HEIGHT) {
+void draw_pixel(uint16_t x, uint16_t y, uint16_t color)
+{
+    if (x >= DISPLAY_WIDTH || y >= DISPLAY_HEIGHT)
+    {
         printf("Trying to draw a pixel out of bounds");
         return;
     }
@@ -239,39 +245,73 @@ void draw_pixel(uint16_t x, uint16_t y, uint16_t color) {
     write_data(0xFF);
 }
 
-void draw_line(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t color) {
-
+// Draws a line with the help of Bresenham's alogrithm
+void draw_line(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t color)
+{
     // Out of bounds
-    if (y1 > DISPLAY_HEIGHT || y2 > DISPLAY_HEIGHT ||
-        y1 < 0 || y2 > 0 ) return;
-    if (x1 > DISPLAY_WIDTH || x2 > DISPLAY_WIDTH ||
-        x1 < 0 || x2 < 0) return;
+    if (y1 >= DISPLAY_HEIGHT || y2 >= DISPLAY_HEIGHT ||
+        y1 < 0 || y2 < 0)
+        printf("Out of bounds on height");
+        return;
+    if (x1 >= DISPLAY_WIDTH || x2 >= DISPLAY_WIDTH ||
+        x1 < 0 || x2 < 0)
+        printf("Out of bounds on width");
+        return;
 
-    // If values are equal to just one pixel
-    // TODO
-    
     if (x1 == x2)
     {
         // Vertical line
-        int16_t start_y = (y1 <= y2) ? y1: y2;
-        int16_t end_y = (y1 >= y2) ? y1 : y2;
+        int16_t start_y = (y1 >= y2) ? y1 : y2;
+        int16_t end_y = (y1 <= y2) ? y1 : y2;
 
         for (int16_t i = start_y; i <= end_y; i++)
         {
-            draw_pixel(x1, i ,color);
+            draw_pixel(x1, i, color);
         }
     }
-    else if (y1 == y2) {
-        // Horizontal line 
-        int16_t start_x = (x1 >= x2) ? x1: x2;
+    else if (y1 == y2)
+    {
+        // Horizontal line
+        int16_t start_x = (x1 >= x2) ? x1 : x2;
         int16_t end_x = (x1 <= x2) ? x1 : x2;
 
         for (int16_t i = start_x; i <= end_x; i++)
         {
-            draw_pixel(i, y1 ,color);
+            draw_pixel(i, y1, color);
         }
     }
-    
+    else
+    {
+        // Delta between each point
+        uint16_t dx = abs(x2 - x1);
+        uint16_t dy = abs(y2 - y1);
+
+        // Direction of movement
+        int16_t sx = (x1 < x2) ? 1 : -1;
+        int16_t sy = (y1 < y2) ? 1 : -1;
+
+        int16_t error = dx / 2;
+
+        if (dx > dy)
+        {
+            while (x1 != x2)
+            {
+                printf("Drawing pixel at x=%d, y=%d\n", x1, y1);
+                draw_pixel(x1, y1, color);
+        
+                x1 += sx;
+                error += dy;
+        
+                if (error >= dx)
+                {
+                    y1 += sy;
+                    error -= dx;
+                }
+            }
+        }          
+    }
+    // Drawing final pixel
+    draw_pixel(x2, y2, color);
 }
 
 int main()
@@ -281,18 +321,21 @@ int main()
 
     init_gpio();
 
+    sleep_ms(5000);
+    printf("Sleep over!");
+
     display_init();
 
-    set_window(0, 0, DISPLAY_WIDTH-1, DISPLAY_HEIGHT-1);
-    
-    for (int i = 0; i < DISPLAY_WIDTH * DISPLAY_HEIGHT; i++) {
-        write_data(BLUE >> 8);    // Write high byte
-        write_data(BLUE & 0xFF);  // Write low byte
-    }
+    set_window(0, 0, DISPLAY_WIDTH - 1, DISPLAY_HEIGHT - 1);
 
+    draw_line(30,10,30,100,GREEN);
+    draw_line(10,20,150,20,BLUE);
+    draw_line(0,0,10,10,GREEN);
+    draw_pixel(20,20,GREEN);
 
     while (true)
     {
+        printf("Sleeping...\n");
         sleep_ms(1000);
     }
 
