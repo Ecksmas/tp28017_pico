@@ -245,24 +245,26 @@ void draw_pixel(uint16_t x, uint16_t y, uint16_t color)
     write_data(0xFF);
 }
 
-// Draws a line with the help of Bresenham's alogrithm
+// Draws a line with the help of Bresenham's algorithm
 void draw_line(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t color)
 {
     // Out of bounds
     if (y1 >= DISPLAY_HEIGHT || y2 >= DISPLAY_HEIGHT ||
-        y1 < 0 || y2 < 0)
-        printf("Out of bounds on height");
-        return;
+        y1 < 0 || y2 < 0) {
+            printf("Out of bounds on height");
+            return;
+        }
     if (x1 >= DISPLAY_WIDTH || x2 >= DISPLAY_WIDTH ||
-        x1 < 0 || x2 < 0)
-        printf("Out of bounds on width");
-        return;
+        x1 < 0 || x2 < 0) {
+            printf("Out of bounds on width");
+            return;
+        }
 
     if (x1 == x2)
     {
         // Vertical line
-        int16_t start_y = (y1 >= y2) ? y1 : y2;
-        int16_t end_y = (y1 <= y2) ? y1 : y2;
+        int16_t start_y = (y1 <= y2) ? y1 : y2;
+        int16_t end_y = (y1 >= y2) ? y1 : y2;
 
         for (int16_t i = start_y; i <= end_y; i++)
         {
@@ -272,8 +274,8 @@ void draw_line(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t colo
     else if (y1 == y2)
     {
         // Horizontal line
-        int16_t start_x = (x1 >= x2) ? x1 : x2;
-        int16_t end_x = (x1 <= x2) ? x1 : x2;
+        int16_t start_x = (x1 <= x2) ? x1 : x2;
+        int16_t end_x = (x1 >= x2) ? x1 : x2;
 
         for (int16_t i = start_x; i <= end_x; i++)
         {
@@ -289,29 +291,28 @@ void draw_line(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t colo
         // Direction of movement
         int16_t sx = (x1 < x2) ? 1 : -1;
         int16_t sy = (y1 < y2) ? 1 : -1;
-
-        int16_t error = dx / 2;
+        int16_t err = (dx > dy ? dx : -dy) / 2;
+        int16_t e2;
 
         if (dx > dy)
         {
-            while (x1 != x2)
-            {
-                printf("Drawing pixel at x=%d, y=%d\n", x1, y1);
+            while (1) {
                 draw_pixel(x1, y1, color);
-        
-                x1 += sx;
-                error += dy;
-        
-                if (error >= dx)
-                {
+                
+                if (x1 == x2 && y1 == y2) break;
+                
+                e2 = err;
+                if (e2 > -dx) {
+                    err -= dy;
+                    x1 += sx;
+                }
+                if (e2 < dy) {
+                    err += dx;
                     y1 += sy;
-                    error -= dx;
                 }
             }
         }          
     }
-    // Drawing final pixel
-    draw_pixel(x2, y2, color);
 }
 
 int main()
@@ -331,7 +332,6 @@ int main()
     draw_line(30,10,30,100,GREEN);
     draw_line(10,20,150,20,BLUE);
     draw_line(0,0,10,10,GREEN);
-    draw_pixel(20,20,GREEN);
 
     while (true)
     {
