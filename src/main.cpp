@@ -250,15 +250,17 @@ void draw_line(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t colo
 {
     // Out of bounds
     if (y1 >= DISPLAY_HEIGHT || y2 >= DISPLAY_HEIGHT ||
-        y1 < 0 || y2 < 0) {
-            printf("Out of bounds on height");
-            return;
-        }
+        y1 < 0 || y2 < 0)
+    {
+        printf("Out of bounds on height");
+        return;
+    }
     if (x1 >= DISPLAY_WIDTH || x2 >= DISPLAY_WIDTH ||
-        x1 < 0 || x2 < 0) {
-            printf("Out of bounds on width");
-            return;
-        }
+        x1 < 0 || x2 < 0)
+    {
+        printf("Out of bounds on width");
+        return;
+    }
 
     if (x1 == x2)
     {
@@ -296,22 +298,50 @@ void draw_line(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t colo
 
         if (dx > dy)
         {
-            while (1) {
+            while (1)
+            {
                 draw_pixel(x1, y1, color);
-                
-                if (x1 == x2 && y1 == y2) break;
-                
+
+                if (x1 == x2 && y1 == y2)
+                    break;
+
                 e2 = err;
-                if (e2 > -dx) {
+                if (e2 > -dx)
+                {
                     err -= dy;
                     x1 += sx;
                 }
-                if (e2 < dy) {
+                if (e2 < dy)
+                {
                     err += dx;
                     y1 += sy;
                 }
             }
-        }          
+        }
+    }
+}
+
+void draw_rectangle(uint16_t posX, uint16_t posY, uint16_t size, uint16_t color, bool fill)
+{
+    // Accomodate for different width and heigth
+
+    if (fill == true)
+    {
+        for (size_t i = posX; i <= posX * size; i++)
+        {
+            draw_line(i, posY, i, posY+size, color);
+        }
+    }
+    else
+    {
+        // Top line
+        draw_line(posX, posY, posX + size, posY, color);
+        // Right line
+        draw_line(posX + size, posY, posX + size, posY + size, color);
+        // Bottom line
+        draw_line(posX, posY + size, posX + size, posY + size, color);
+        // Left line
+        draw_line(posX, posY, posX, posY + size, color);
     }
 }
 
@@ -329,9 +359,9 @@ int main()
 
     set_window(0, 0, DISPLAY_WIDTH - 1, DISPLAY_HEIGHT - 1);
 
-    draw_line(30,10,30,100,GREEN);
-    draw_line(10,20,150,20,BLUE);
-    draw_line(0,0,10,10,GREEN);
+    draw_rectangle(20, 20, 10, GREEN, true);
+    draw_rectangle(100, 50, 40, BLUE, false);
+
 
     while (true)
     {
