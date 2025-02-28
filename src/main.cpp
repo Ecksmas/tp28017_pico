@@ -100,11 +100,11 @@ void reset_sequence()
     sleep_ms(15);
 }
 
+// Based on Ted Rossin's initialization sequence
 void display_init()
 {
     reset_sequence();
 
-    // Based on Ted Rossin's initialization sequence
     write_command(0x01); // Software reset
     sleep_ms(5);
 
@@ -324,24 +324,28 @@ void draw_line(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t colo
 void draw_rectangle(uint16_t posX, uint16_t posY, uint16_t size, uint16_t color, bool fill)
 {
     // Accomodate for different width and heigth
+    // Replace size with two new params that accomodate for width and heigth
+
+    uint16_t endX = posX + size;
+    uint16_t endY = posY + size;
 
     if (fill == true)
     {
-        for (size_t i = posX; i <= posX * size; i++)
+        for (size_t i = posY; i <= endY; i++)
         {
-            draw_line(i, posY, i, posY+size, color);
+            draw_line(posX, i, endX, i, color);
         }
     }
     else
     {
         // Top line
-        draw_line(posX, posY, posX + size, posY, color);
+        draw_line(posX, posY, endX, posY, color);
         // Right line
-        draw_line(posX + size, posY, posX + size, posY + size, color);
+        draw_line(endX, posY, endX, endY, color);
         // Bottom line
-        draw_line(posX, posY + size, posX + size, posY + size, color);
+        draw_line(posX, endY, endX, endY, color);
         // Left line
-        draw_line(posX, posY, posX, posY + size, color);
+        draw_line(posX, posY, posX, endY, color);
     }
 }
 
@@ -359,8 +363,10 @@ int main()
 
     set_window(0, 0, DISPLAY_WIDTH - 1, DISPLAY_HEIGHT - 1);
 
-    draw_rectangle(20, 20, 10, GREEN, true);
-    draw_rectangle(100, 50, 40, BLUE, false);
+    draw_rectangle(20, 20, 5, GREEN, true);
+    draw_rectangle(40, 60, 20, GREEN, true);
+    draw_rectangle(100, 100, 5, BLUE, false);
+    draw_rectangle(150, 200, 30, BLUE, false);
 
 
     while (true)
