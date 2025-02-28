@@ -265,10 +265,10 @@ void draw_line(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t colo
     if (x1 == x2)
     {
         // Vertical line
-        int16_t start_y = (y1 <= y2) ? y1 : y2;
-        int16_t end_y = (y1 >= y2) ? y1 : y2;
+        int16_t startY = (y1 <= y2) ? y1 : y2;
+        int16_t endY = (y1 >= y2) ? y1 : y2;
 
-        for (int16_t i = start_y; i <= end_y; i++)
+        for (int16_t i = startY; i <= endY; i++)
         {
             draw_pixel(x1, i, color);
         }
@@ -276,10 +276,10 @@ void draw_line(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t colo
     else if (y1 == y2)
     {
         // Horizontal line
-        int16_t start_x = (x1 <= x2) ? x1 : x2;
-        int16_t end_x = (x1 >= x2) ? x1 : x2;
+        int16_t startX = (x1 <= x2) ? x1 : x2;
+        int16_t endX = (x1 >= x2) ? x1 : x2;
 
-        for (int16_t i = start_x; i <= end_x; i++)
+        for (int16_t i = startX; i <= endX; i++)
         {
             draw_pixel(i, y1, color);
         }
@@ -321,31 +321,44 @@ void draw_line(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t colo
     }
 }
 
-void draw_rectangle(uint16_t posX, uint16_t posY, uint16_t size, uint16_t color, bool fill)
+// Draws a rectangle with the help of a start position and end position
+void draw_rectangle(uint16_t startX, uint16_t startY, uint16_t endX, uint16_t endY, uint16_t color, bool fill)
 {
-    // Accomodate for different width and heigth
-    // Replace size with two new params that accomodate for width and heigth
 
-    uint16_t endX = posX + size;
-    uint16_t endY = posY + size;
+    // If endX is less than startX, swap
+    if (endX < startX)
+    {
+        uint16_t temp = startX;
+        startX = endX;
+        endX = temp;
+    }
+
+    // If endY is less than startY, swap
+    if (endY < startY)
+    {
+        uint16_t temp = startY;
+        startY = endY;
+        endY = temp;
+    }
 
     if (fill == true)
     {
-        for (size_t i = posY; i <= endY; i++)
+        // Colors in every line between the cordinates
+        for (size_t i = startY; i <= endY; i++)
         {
-            draw_line(posX, i, endX, i, color);
+            draw_line(startX, i, endX, i, color);
         }
     }
     else
     {
         // Top line
-        draw_line(posX, posY, endX, posY, color);
+        draw_line(startX, startY, endX, startY, color);
         // Right line
-        draw_line(endX, posY, endX, endY, color);
+        draw_line(endX, startY, endX, endY, color);
         // Bottom line
-        draw_line(posX, endY, endX, endY, color);
+        draw_line(startX, endY, endX, endY, color);
         // Left line
-        draw_line(posX, posY, posX, endY, color);
+        draw_line(startX, startY, startX, endY, color);
     }
 }
 
@@ -363,11 +376,11 @@ int main()
 
     set_window(0, 0, DISPLAY_WIDTH - 1, DISPLAY_HEIGHT - 1);
 
-    draw_rectangle(20, 20, 5, GREEN, true);
-    draw_rectangle(40, 60, 20, GREEN, true);
-    draw_rectangle(100, 100, 5, BLUE, false);
-    draw_rectangle(150, 200, 30, BLUE, false);
+    draw_rectangle(20, 20, 30, 30, GREEN, true);
+    draw_rectangle(100, 100, 120, 150, BLUE, false);
 
+    draw_rectangle(20, 40, 50, 80, WHITE, true);
+    draw_rectangle(100, 20, 150, 150, RED, false);
 
     while (true)
     {
